@@ -1,6 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id), el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
-const db=window.supabase?.createClient('https://fsalybetyybqgtnjvsfi.supabase.co','sb_publishable_5vGNWo_tAVVRpKBnXSiJcw_B30yW1es');
+let db; try { db=window.supabase?.createClient('https://fsalybetyybqgtnjvsfi.supabase.co','sb_publishable_5vGNWo_tAVVRpKBnXSiJcw_B30yW1es'); } catch(e) { console.error(e); }
 let user=null,member=false,admin=false,tab='board',filter='all',busy=false,epoch=0;
 const notice=t=>$('notice').textContent=t;
 function check(r){if(r.error)throw r.error;return r.data;}
@@ -24,4 +24,4 @@ async function session(s){user=s?.user||null;member=false;admin=false;$('login')
 $('login').onclick=()=>run(async()=>{if(!db)return notice('서버 연결 라이브러리를 불러오지 못했습니다.');if(user){check(await db.auth.signOut());await session(null);}else{if(location.protocol==='file:')return notice('배포된 웹사이트에서 로그인해 주세요.');check(await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:new URL('./',location.href).href}}));}});
 (async()=>{await refresh();$('suggest').querySelector('button.primary').disabled=true;if(!db)return notice('연결 라이브러리를 불러오지 못했습니다. 예시 화면만 표시합니다.');try{const s=check(await db.auth.getSession());await session(s.session);db.auth.onAuthStateChange((event,s)=>{if(event==='SIGNED_IN'||event==='SIGNED_OUT')setTimeout(()=>session(s),0);});}catch(e){console.error(e);notice('로그인 상태를 확인할 수 없습니다.');}})();
 setInterval(()=>{if(member&&tab==='poll'&&!busy&&!document.querySelector('#polls input:checked'))refresh();},15000);
-if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.error);
+if('serviceWorker'in navigator) navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.filter(r=>r.scope===new URL('./',location.href).href).map(r=>r.unregister()))).catch(console.error);
