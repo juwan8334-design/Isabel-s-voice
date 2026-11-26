@@ -1,0 +1,13 @@
+{
+  "name": "Isabel's Voice",
+  "short_name": "Isabel's Voice",
+  "description": "학생의 목소리가 학교의 변화가 됩니다.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#142d50",
+  "icons": [
+    {"src":"./assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
